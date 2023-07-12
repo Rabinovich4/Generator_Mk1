@@ -3,6 +3,8 @@ import string
 from tkinter import *
 from tkinter import ttk
 import pyperclip
+import uuid
+
 
 root = Tk()     # начало окнта ткинтера
 root.title('Generator_Mk1')
@@ -20,6 +22,7 @@ alphabet = ''.join(string.ascii_letters)
 all_simbols = ''.join(string.punctuation + string.digits + string.ascii_letters)
 phone_number_8 = '1'.join(string.digits)    # почему-то выбирается все три кнпки если убрать цифры из ковычекк телефонов
 phone_number_plus_7 = '2'.join(string.digits)
+user_uuid = uuid
 
 btn_simbols = ttk.Radiobutton(text='Спец-символы', value=simbols)
 btn_simbols.pack()
@@ -39,6 +42,9 @@ btn_phone_number_8.pack()
 btn_phone_number_plus_7 = ttk.Radiobutton(text='Телефон с +7...', value=phone_number_plus_7)
 btn_phone_number_plus_7.pack()
 
+btn_user_uuid = ttk.Radiobutton(text='uuid', value=uuid)
+btn_user_uuid.pack()
+
 selected_button = None
 
 
@@ -56,6 +62,8 @@ def check_selection():
         selected_button = 'Телефон с 8...'
     elif btn_phone_number_plus_7.state() == ('selected',):
         selected_button = 'Телефон с +7...'
+    elif btn_user_uuid.state() == ('selected',):
+        selected_button = 'uuid'
     else:
         selected_button = None
 
@@ -75,6 +83,9 @@ def choice(user_num, data_type):
         else:
             znaki = ''.join(random.choices(data_type, k=10))
             return f"8{znaki}"
+    elif selected_button == 'uuid':
+        znaki = uuid
+        return znaki
     else:
         znaki = ''.join(random.choices(data_type, k=user_num))
         return znaki
@@ -92,10 +103,15 @@ def generate_simbols():
             alphabet if selected_button == 'eng.буквы' else \
                 all_simbols if selected_button == 'Всё подряд' else \
                     digits if selected_button == 'Телефон с 8...' else \
-                        digits if selected_button == 'Телефон с +7...' else None
+                        digits if selected_button == 'Телефон с +7...' else \
+                            uuid if selected_button == 'uuid' else None
 
-    if data_type is not None:
+    if data_type is not None and data_type != uuid:
         result = choice(user_input, data_type)
+        label.config(text=result)
+        pyperclip.copy(result)
+    elif data_type == uuid:
+        result = str(uuid.uuid4())
         label.config(text=result)
         pyperclip.copy(result)
     else:
